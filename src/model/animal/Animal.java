@@ -1,19 +1,21 @@
-package Human;
-import FamilyTree.FamilyTreeItem;
-import java.io.*;
+package model.animal;
+
+import model.familyTree.FamilyTreeItem;
+import model.human.Gender;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Human implements Serializable, Comparable<Human>, FamilyTreeItem<Human> {
+public class Animal implements Serializable, Comparable<Animal>, FamilyTreeItem<Animal> {
     private Integer id;
     private String name;
     private LocalDate birthDate, deathDate;
-    private List<Human> children = new ArrayList<>();
-    private Human father, mother;
+    private List<Animal> children = new ArrayList<>();
+    private Animal father, mother;
     private Gender gender;
-    private Human spouse;
+    private String breed;
 
     public void setId(Integer id){
         this.id = id;
@@ -28,15 +30,15 @@ public class Human implements Serializable, Comparable<Human>, FamilyTreeItem<Hu
         this.deathDate = deathDate;
     }
 
-    public void setChildren(Human kid){
+    public void setChildren(Animal kid){
         this.children.add(kid);
     }
 
-    public void setFather(Human father){
+    public void setFather(Animal father){
         this.father = father;
     }
 
-    public void setMother(Human mother){
+    public void setMother(Animal mother){
         this.mother = mother;
     }
 
@@ -44,8 +46,8 @@ public class Human implements Serializable, Comparable<Human>, FamilyTreeItem<Hu
         this.gender = gender;
     }
 
-    public void setSpouse(Human spouse){
-        this.spouse = spouse;
+    public void setBreed(String breed){
+        this.breed = breed;
     }
 
     public Integer getId(){
@@ -64,20 +66,30 @@ public class Human implements Serializable, Comparable<Human>, FamilyTreeItem<Hu
         return this.deathDate;
     }
 
-    public Human getFather(){
+    public Animal getFather(){
         return this.father;
     }
 
-    public Human getMother(){
+    public Animal getMother(){
         return this.mother;
-    }
-
-    public Human getSpouse(){
-        return this.spouse;
     }
 
     public Gender getGender(){
         return this.gender;
+    }
+
+    @Override
+    public Animal getSpouse() {
+        return null;
+    }
+
+    @Override
+    public void setSpouse(Animal animal) {
+
+    }
+
+    public String getBreed(){
+        return this.breed;
     }
 
     public Integer getAge(){
@@ -94,47 +106,31 @@ public class Human implements Serializable, Comparable<Human>, FamilyTreeItem<Hu
         return age.getYears();
     }
 
-    public List<Human> getChildren(){
-//        List<Human> listchildren = new ArrayList<>();
-//        for (Human kid: children) {
-//            listchildren.add(kid);
-//        }
+    public List<Animal> getChildren(){
         return new ArrayList<>(children);
     }
 
-    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Имя: "+ this.name + "\n" + "Дата рождения: " + this.birthDate + "\n");
         stringBuilder.append("Дата смерти: " + this.deathDate + "\n");
         stringBuilder.append("Возраст: " + this.getAge() + " лет \n");
+        stringBuilder.append("Порода: " + this.getBreed() + "\n");
         if (this.father != null){
             stringBuilder.append("Отец: " + this.father.name + "\n");
         }
         if (this.mother != null){
             stringBuilder.append("Мать: " + mother.name + "\n");
         }
-        if (this.spouse != null){
-            stringBuilder.append("Супруг(а): " + spouse.name + "\n");
-        }
-        for (Human tmp: children) {
+        for (Animal tmp: children) {
             stringBuilder.append("Дети: " + tmp.name + "\n");
         }
         return  stringBuilder.toString();
     }
 
-    public void saveToFile(String filename) throws IOException, ClassNotFoundException {
-        ObjectOutputStream outputStrim = new ObjectOutputStream(new FileOutputStream(filename));
-        outputStrim.writeObject(this);
-    }
-
-    public Human loadFromFile(String filename) throws IOException, ClassNotFoundException{
-        ObjectInputStream inputStrim = new ObjectInputStream(new FileInputStream(filename));
-        return (Human) inputStrim.readObject();
-    }
-
     @Override
-    public int compareTo(Human o) {
+    public int compareTo(Animal o) {
         return this.name.compareTo(o.name);
     }
+
 }

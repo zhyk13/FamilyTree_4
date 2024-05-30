@@ -1,20 +1,32 @@
-package Animal;
-import FamilyTree.FamilyTreeItem;
-import Human.Gender;
-import java.io.Serializable;
+package model.human;
+import model.familyTree.FamilyTreeItem;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Animal implements Serializable, Comparable<Animal>, FamilyTreeItem<Animal> {
+public class Human implements Serializable, Comparable<Human>, FamilyTreeItem<Human> {
     private Integer id;
     private String name;
     private LocalDate birthDate, deathDate;
-    private List<Animal> children = new ArrayList<>();
-    private Animal father, mother;
+    private List<Human> children = new ArrayList<>();
+    private Human father, mother;
     private Gender gender;
-    private String breed;
+    private Human spouse;
+
+    public Human(Integer id, String name, LocalDate birthDate, LocalDate deathDate, List<Human> children, Human father,
+                 Human mother, Gender gender, Human spouse) {
+        this.id = id;
+        this.name = name;
+        this.birthDate = birthDate;
+        this.deathDate = deathDate;
+        this.children = children;
+        this.father = father;
+        this.mother = mother;
+        this.gender = gender;
+        this.spouse = spouse;
+    }
 
     public void setId(Integer id){
         this.id = id;
@@ -29,15 +41,15 @@ public class Animal implements Serializable, Comparable<Animal>, FamilyTreeItem<
         this.deathDate = deathDate;
     }
 
-    public void setChildren(Animal kid){
+    public void setChildren(Human kid){
         this.children.add(kid);
     }
 
-    public void setFather(Animal father){
+    public void setFather(Human father){
         this.father = father;
     }
 
-    public void setMother(Animal mother){
+    public void setMother(Human mother){
         this.mother = mother;
     }
 
@@ -45,8 +57,8 @@ public class Animal implements Serializable, Comparable<Animal>, FamilyTreeItem<
         this.gender = gender;
     }
 
-    public void setBreed(String breed){
-        this.breed = breed;
+    public void setSpouse(Human spouse){
+        this.spouse = spouse;
     }
 
     public Integer getId(){
@@ -65,30 +77,20 @@ public class Animal implements Serializable, Comparable<Animal>, FamilyTreeItem<
         return this.deathDate;
     }
 
-    public Animal getFather(){
+    public Human getFather(){
         return this.father;
     }
 
-    public Animal getMother(){
+    public Human getMother(){
         return this.mother;
+    }
+
+    public Human getSpouse(){
+        return this.spouse;
     }
 
     public Gender getGender(){
         return this.gender;
-    }
-
-    @Override
-    public Animal getSpouse() {
-        return null;
-    }
-
-    @Override
-    public void setSpouse(Animal animal) {
-
-    }
-
-    public String getBreed(){
-        return this.breed;
     }
 
     public Integer getAge(){
@@ -105,31 +107,47 @@ public class Animal implements Serializable, Comparable<Animal>, FamilyTreeItem<
         return age.getYears();
     }
 
-    public List<Animal> getChildren(){
+    public List<Human> getChildren(){
+//        List<Model.Human> listchildren = new ArrayList<>();
+//        for (Model.Human kid: children) {
+//            listchildren.add(kid);
+//        }
         return new ArrayList<>(children);
     }
 
+    @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Имя: "+ this.name + "\n" + "Дата рождения: " + this.birthDate + "\n");
         stringBuilder.append("Дата смерти: " + this.deathDate + "\n");
         stringBuilder.append("Возраст: " + this.getAge() + " лет \n");
-        stringBuilder.append("Порода: " + this.getBreed() + "\n");
         if (this.father != null){
             stringBuilder.append("Отец: " + this.father.name + "\n");
         }
         if (this.mother != null){
             stringBuilder.append("Мать: " + mother.name + "\n");
         }
-        for (Animal tmp: children) {
+        if (this.spouse != null){
+            stringBuilder.append("Супруг(а): " + spouse.name + "\n");
+        }
+        for (Human tmp: children) {
             stringBuilder.append("Дети: " + tmp.name + "\n");
         }
         return  stringBuilder.toString();
     }
 
-    @Override
-    public int compareTo(Animal o) {
-        return this.name.compareTo(o.name);
+    public void saveToFile(String filename) throws IOException, ClassNotFoundException {
+        ObjectOutputStream outputStrim = new ObjectOutputStream(new FileOutputStream(filename));
+        outputStrim.writeObject(this);
     }
 
+    public Human loadFromFile(String filename) throws IOException, ClassNotFoundException{
+        ObjectInputStream inputStrim = new ObjectInputStream(new FileInputStream(filename));
+        return (Human) inputStrim.readObject();
+    }
+
+    @Override
+    public int compareTo(Human o) {
+        return this.name.compareTo(o.name);
+    }
 }
